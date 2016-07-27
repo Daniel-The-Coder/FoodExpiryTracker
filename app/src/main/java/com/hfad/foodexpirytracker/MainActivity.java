@@ -35,17 +35,17 @@ public class MainActivity extends AppCompatActivity {
         //TODO
 
         //sort current alphabetically
-        Collections.sort(current, new AlphaComparator());
+        //Collections.sort(current, new AlphaComparator());
 
         //iterate through current and display
         //clear list
-        LinearLayout items = (LinearLayout)findViewById(R.id.items);
-        items.removeAllViews();
+        //LinearLayout items = (LinearLayout)findViewById(R.id.items);
+        //items.removeAllViews();
 
         //iterate through current and create an item for every element and ad it to items
-        for(FoodItem f:current){
-            items.addView(createFoodItem(f.getName(), f.getDate(), f.getId(), 0));
-        }
+        //for(FoodItem f:current){
+        //    items.addView(createFoodItem(f.getName(), f.getDate(), f.getId(), 0));
+        //}
 
     }
 
@@ -72,9 +72,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        param.setMargins(30, 30, 30, 30);
         //iterate through current and create an item for every element and ad it to items
         for(FoodItem f:current){
-            items.addView(createFoodItem(f.getName(), f.getDate(), f.getId(), -1));
+            items.addView(createFoodItem(f.getName(), f.getDate(), f.getId(), -1),param);
         }
     }
 
@@ -96,9 +98,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        param.setMargins(30, 30, 30, 30);
         //iterate through current and create an item for every element and ad it to items
         for(FoodItem f:current){
-            items.addView(createFoodItem(f.getName(), f.getDate(), f.getId(), 0));
+            items.addView(createFoodItem(f.getName(), f.getDate(), f.getId(), 0),param);
         }
     }
 
@@ -115,14 +119,16 @@ public class MainActivity extends AppCompatActivity {
         current = new ArrayList<>();
         Date today = new Date();
         for(FoodItem f:foodItems){
-            if(TimeUnit.DAYS.convert(f.getDate().getTime()-today.getTime(),TimeUnit.MILLISECONDS)==1){
+            if(TimeUnit.DAYS.convert(f.getDate().getTime() - today.getTime(), TimeUnit.MILLISECONDS)==1){
                 current.add(f);
             }
         }
 
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        param.setMargins(30, 30, 30, 30);
         //iterate through current and create an item for every element and ad it to items
         for(FoodItem f:current){
-            items.addView(createFoodItem(f.getName(), f.getDate(), f.getId(), 1));
+            items.addView(createFoodItem(f.getName(), f.getDate(), f.getId(), 1),param);
         }
     }
 
@@ -144,9 +150,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        param.setMargins(30, 30, 30, 30);
         //iterate through current and create an item for every element and ad it to items
         for(FoodItem f:current){
-            items.addView(createFoodItem(f.getName(), f.getDate(), f.getId(), 2));
+            items.addView(createFoodItem(f.getName(), f.getDate(), f.getId(), 2),param);
         }
     }
 
@@ -161,9 +169,11 @@ public class MainActivity extends AppCompatActivity {
         //clear list
         LinearLayout items = (LinearLayout)findViewById(R.id.items);
         items.removeAllViews();
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        param.setMargins(30, 30, 30, 30);
         //iterate through current and create an item for every element and ad it to items
         for(FoodItem f:current){
-            items.addView(createFoodItem(f.getName(), f.getDate(), f.getId(), 0));
+            items.addView(createFoodItem(f.getName(), f.getDate(), f.getId(), 0),param);
         }
     }
 
@@ -178,9 +188,11 @@ public class MainActivity extends AppCompatActivity {
         //clear list
         LinearLayout items = (LinearLayout)findViewById(R.id.items);
         items.removeAllViews();
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        param.setMargins(30, 30, 30, 30);
         //iterate through current and create an item for every element and ad it to items
         for(FoodItem f:current){
-            items.addView(createFoodItem(f.getName(), f.getDate(), f.getId(), 0));
+            items.addView(createFoodItem(f.getName(), f.getDate(), f.getId(), 0),param);
         }
     }
 
@@ -235,7 +247,22 @@ public class MainActivity extends AppCompatActivity {
             delButton.setTextColor(Color.parseColor("#00ff00"));
         }
         delButton.setGravity(Gravity.RIGHT);
+        delButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public  void onClick(View v){
+                delete(v);
+            }
+        });
 
         return L;
+    }
+
+    public void delete(View view){
+        //remove the item from the display
+        LinearLayout L = (LinearLayout)view.getParent();
+        LinearLayout items = (LinearLayout)findViewById(R.id.items);
+        items.removeView(L);
+
+        //remove the item from the database
     }
 }
