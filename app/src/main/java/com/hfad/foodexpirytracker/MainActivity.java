@@ -22,11 +22,16 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayList<FoodItem> foodItems;
     private ArrayList<FoodItem> current;
+    private int sort;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        current = new ArrayList<>();
+        foodItems = new ArrayList<>();
+        sort = 0;//alphabetical
 
         //access the database and store everything in an ArrayList
         //TODO
@@ -35,17 +40,17 @@ public class MainActivity extends AppCompatActivity {
         //TODO
 
         //sort current alphabetically
-        //Collections.sort(current, new AlphaComparator());
+        Collections.sort(current, new AlphaComparator());
 
         //iterate through current and display
         //clear list
-        //LinearLayout items = (LinearLayout)findViewById(R.id.items);
+        LinearLayout items = (LinearLayout)findViewById(R.id.items);
         //items.removeAllViews();
 
         //iterate through current and create an item for every element and ad it to items
-        //for(FoodItem f:current){
-        //    items.addView(createFoodItem(f.getName(), f.getDate(), f.getId(), 0));
-        //}
+        for(FoodItem f:current){
+            items.addView(createFoodItem(f.getName(), f.getDate(), f.getId(), 0));
+        }
 
     }
 
@@ -70,6 +75,13 @@ public class MainActivity extends AppCompatActivity {
             if(f.getDate().compareTo(today)<0){
                 current.add(f);
             }
+        }
+        //sort
+        if(sort==0){
+            Collections.sort(current,new AlphaComparator());
+        }
+        else{
+            Collections.sort(current, new DateComparator());
         }
 
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -97,6 +109,13 @@ public class MainActivity extends AppCompatActivity {
                 current.add(f);
             }
         }
+        //sort
+        if(sort==0){
+            Collections.sort(current,new AlphaComparator());
+        }
+        else{
+            Collections.sort(current, new DateComparator());
+        }
 
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         param.setMargins(30, 30, 30, 30);
@@ -122,6 +141,13 @@ public class MainActivity extends AppCompatActivity {
             if(TimeUnit.DAYS.convert(f.getDate().getTime() - today.getTime(), TimeUnit.MILLISECONDS)==1){
                 current.add(f);
             }
+        }
+        //sort
+        if(sort==0){
+            Collections.sort(current,new AlphaComparator());
+        }
+        else{
+            Collections.sort(current, new DateComparator());
         }
 
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -149,6 +175,13 @@ public class MainActivity extends AppCompatActivity {
                 current.add(f);
             }
         }
+        //sort
+        if(sort==0){
+            Collections.sort(current,new AlphaComparator());
+        }
+        else{
+            Collections.sort(current, new DateComparator());
+        }
 
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         param.setMargins(30, 30, 30, 30);
@@ -175,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
         for(FoodItem f:current){
             items.addView(createFoodItem(f.getName(), f.getDate(), f.getId(), 0),param);
         }
+        sort = 0;
     }
 
     public void sortDate(View view){
@@ -194,6 +228,7 @@ public class MainActivity extends AppCompatActivity {
         for(FoodItem f:current){
             items.addView(createFoodItem(f.getName(), f.getDate(), f.getId(), 0),param);
         }
+        sort = 1;
     }
 
     /**
