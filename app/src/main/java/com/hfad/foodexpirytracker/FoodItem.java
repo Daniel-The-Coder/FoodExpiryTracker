@@ -1,21 +1,19 @@
 package com.hfad.foodexpirytracker;
 
+import java.util.Date;
+
 /**
  * Created by Lord Daniel on 7/27/2016.
  */
 public class FoodItem {
     private String name;
     private int id;
-    private int year;
-    private int month;
-    private int day;
+    private Date date;
 
-    public FoodItem(String name, int id, int year, int month, int day){
+    public FoodItem(String name, int id, Date date){
         this.name = name;
         this.id = id;
-        this.year = year;
-        this.month = month;
-        this.day = day;
+        this.date = date;
     }
 
     public String getName(){
@@ -26,15 +24,7 @@ public class FoodItem {
         return this.id;
     }
 
-    public int getYear(){
-        return this.year;
-    }
-
-    public int getMonth(){
-        return this.month;
-    }
-
-    public int getDay(){
-        return this.day;
+    public Date getDate(){
+        return this.date;
     }
 }
