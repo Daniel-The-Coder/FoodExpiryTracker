@@ -51,6 +51,7 @@
         android:layout_gravity="center"
         android:textColor="#ffffff"
         android:background="#ee1289"
-        android:textSize="20dp" />
+        android:textSize="20dp"
+        android:onClick="add" />
 
 </LinearLayout>

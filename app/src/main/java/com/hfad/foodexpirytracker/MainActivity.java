@@ -34,10 +34,16 @@ public class MainActivity extends AppCompatActivity {
         sort = 0;//alphabetical
 
         //access the database and store everything in an ArrayList
-        //TODO
+        Database db = new Database(this);
+        foodItems = new ArrayList<>(db.getAllData());
 
         //iterate through foodItems and store items expiring today in current
-        //TODO
+        for(FoodItem f:foodItems){
+            Date today = new Date();
+            if(f.getDate().equals(today)){
+                current.add(f);
+            }
+        }
 
         //sort current alphabetically
         Collections.sort(current, new AlphaComparator());
@@ -90,6 +96,12 @@ public class MainActivity extends AppCompatActivity {
         for(FoodItem f:current){
             items.addView(createFoodItem(f.getName(), f.getDate(), f.getId(), -1),param);
         }
+
+        //just for testing
+//        LinearLayout Lx = (LinearLayout)findViewById(R.id.testLinearLayout);
+//        Lx.setBackgroundColor(Color.parseColor("#ff0000"));
+//        Button Tx = (Button)findViewById(R.id.testButton);
+//        Tx.setTextColor(Color.parseColor("#ff0000"));
     }
 
     public void viewToday(View view){
@@ -123,6 +135,12 @@ public class MainActivity extends AppCompatActivity {
         for(FoodItem f:current){
             items.addView(createFoodItem(f.getName(), f.getDate(), f.getId(), 0),param);
         }
+
+        //just for testing
+//        LinearLayout Lx = (LinearLayout)findViewById(R.id.testLinearLayout);
+//        Lx.setBackgroundColor(Color.parseColor("#ff6103"));
+//        Button Tx = (Button)findViewById(R.id.testButton);
+//        Tx.setTextColor(Color.parseColor("#ff6103"));
     }
 
     public void viewTmrw(View view){
@@ -156,6 +174,12 @@ public class MainActivity extends AppCompatActivity {
         for(FoodItem f:current){
             items.addView(createFoodItem(f.getName(), f.getDate(), f.getId(), 1),param);
         }
+
+        //just for testing
+//        LinearLayout Lx = (LinearLayout)findViewById(R.id.testLinearLayout);
+//        Lx.setBackgroundColor(Color.parseColor("#1e90ff"));
+//        Button Tx = (Button)findViewById(R.id.testButton);
+//        Tx.setTextColor(Color.parseColor("#1e90ff"));
     }
 
     public void viewFuture(View view){
@@ -189,6 +213,12 @@ public class MainActivity extends AppCompatActivity {
         for(FoodItem f:current){
             items.addView(createFoodItem(f.getName(), f.getDate(), f.getId(), 2),param);
         }
+
+        //just for testing
+//        LinearLayout Lx = (LinearLayout)findViewById(R.id.testLinearLayout);
+//        Lx.setBackgroundColor(Color.parseColor("#00ff00"));
+//        Button Tx = (Button)findViewById(R.id.testButton);
+//        Tx.setTextColor(Color.parseColor("#00ff00"));
     }
 
     public void sortAlpha(View view){
@@ -262,9 +292,20 @@ public class MainActivity extends AppCompatActivity {
         TextView textName = new TextView(this);
         textName.setText(name);
         TextView textDate = new TextView(this);
-        textDate.setText(date.toString());
+        textDate.setText("Expires "+date.toString());
         TextView textId = new TextView(this);
         textId.setText(Integer.toString(id));
+
+        LinearLayout L2 = new LinearLayout(this);
+        L2.setOrientation(LinearLayout.HORIZONTAL);
+        L2.setPadding(10,10,10,10);
+        TextView daysLeft = new TextView(this);
+        Date today = new Date();
+        daysLeft.setText(Long.toString(TimeUnit.DAYS.convert(date.getTime()-today.getTime(),TimeUnit.MILLISECONDS))+" days left.");
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
+        L2.addView(daysLeft,param);
 
         Button delButton = new Button(this);
         delButton.setBackgroundColor(Color.parseColor("#000000"));
@@ -282,22 +323,31 @@ public class MainActivity extends AppCompatActivity {
             delButton.setTextColor(Color.parseColor("#00ff00"));
         }
         delButton.setGravity(Gravity.RIGHT);
-        delButton.setOnClickListener(new View.OnClickListener(){
+        delButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public  void onClick(View v){
+            public void onClick(View v) {
                 delete(v);
             }
         });
+        delButton.setGravity(Gravity.RIGHT);
+        L2.addView(delButton);
+
+        L.addView(textName);
+        L.addView(textDate);
+        L.addView(textId);
+        L.addView(L2);
 
         return L;
     }
 
     public void delete(View view){
         //remove the item from the display
-        LinearLayout L = (LinearLayout)view.getParent();
+        LinearLayout L = (LinearLayout)view.getParent().getParent();
         LinearLayout items = (LinearLayout)findViewById(R.id.items);
         items.removeView(L);
 
         //remove the item from the database
+        Database db = new Database(this);
+        db.delete(Integer.parseInt(((TextView)L.getChildAt(2)).getText().toString()));
     }
 }
