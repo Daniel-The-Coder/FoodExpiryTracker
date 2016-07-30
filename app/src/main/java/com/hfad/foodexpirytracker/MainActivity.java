@@ -43,9 +43,11 @@ public class MainActivity extends AppCompatActivity {
         foodItems = new ArrayList<>(db.getAllData());
 
         //iterate through foodItems and store items expiring today in current
+        Calendar todayDate = Calendar.getInstance();
+        todayDate.clear(Calendar.HOUR); todayDate.clear(Calendar.MINUTE); todayDate.clear(Calendar.SECOND);
+        Date today = todayDate.getTime();
         for(FoodItem f:foodItems){
-            Date today = new Date();
-            if(f.getDate().equals(today)){
+            if(daysBetween(f.getDate(), today)==0){
                 current.add(f);
             }
         }
@@ -58,9 +60,11 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout items = (LinearLayout)findViewById(R.id.items);
         items.removeAllViews();
 
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        param.setMargins(30, 30, 30, 30);
         //iterate through current and create an item for every element and ad it to items
         for(FoodItem f:current){
-            items.addView(createFoodItem(f.getName(), f.getDate(), f.getId(), 0));
+            items.addView(createFoodItem(f.getName(), f.getDate(), f.getId(), 0),param);
         }
 
     }
@@ -331,7 +335,7 @@ public class MainActivity extends AppCompatActivity {
         todayDate.clear(Calendar.HOUR); todayDate.clear(Calendar.MINUTE); todayDate.clear(Calendar.SECOND);
         Date today = todayDate.getTime();
         if(this.time == -1) {
-            daysLeft.setText("Expired "+Integer.toString((-1)*daysBetween(date, today)) + " days ago.");
+            daysLeft.setText("Expired "+Integer.toString((-1)*daysBetween(date, today)) + " d ago.");
         }
         else if(this.time == 0) {
             daysLeft.setText("Expires today.");
@@ -340,9 +344,9 @@ public class MainActivity extends AppCompatActivity {
             daysLeft.setText("Expires tomorrow.");
         }
         else { //this.time = 2
-            daysLeft.setText(Integer.toString(daysBetween(date, today)) + " days left.");
+            daysLeft.setText(Integer.toString(daysBetween(date, today)) + " d left.");
         }
-        daysLeft.setTextColor(Color.parseColor("#ffffff"));
+        daysLeft.setTextColor(Color.parseColor("#000000"));
         daysLeft.setTextSize(textSize);
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
