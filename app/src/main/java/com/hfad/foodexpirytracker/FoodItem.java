@@ -10,6 +10,10 @@ public class FoodItem {
     private int id;
     private Date date;
 
+    public FoodItem(){
+        //empty constructor
+    }
+
     public FoodItem(String name, int id, Date date){
         this.name = name;
         this.id = id;

@@ -13,6 +13,7 @@ import android.widget.TextView;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -23,11 +24,15 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<FoodItem> foodItems;
     private ArrayList<FoodItem> current;
     private int sort;
+    private int time = 0;
+    private int textSize = 20;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        this.time = 0;
 
         current = new ArrayList<>();
         foodItems = new ArrayList<>();
@@ -51,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         //iterate through current and display
         //clear list
         LinearLayout items = (LinearLayout)findViewById(R.id.items);
-        //items.removeAllViews();
+        items.removeAllViews();
 
         //iterate through current and create an item for every element and ad it to items
         for(FoodItem f:current){
@@ -66,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void viewExpired(View view){
+        this.time = -1;
         //change border color
         LinearLayout border = (LinearLayout)findViewById(R.id.border);
         border.setBackgroundColor(Color.RED);
@@ -78,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         current = new ArrayList<>();
         Date today = new Date();
         for(FoodItem f:foodItems){
-            if(f.getDate().compareTo(today)<0){
+            if(daysBetween(f.getDate(), today)<0){
                 current.add(f);
             }
         }
@@ -105,6 +111,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void viewToday(View view){
+        this.time = 0;
+
         //change border color
         LinearLayout border = (LinearLayout)findViewById(R.id.border);
         border.setBackgroundColor(Color.parseColor("#ff6103"));
@@ -117,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
         current = new ArrayList<>();
         Date today = new Date();
         for(FoodItem f:foodItems){
-            if(f.getDate().compareTo(today)==0){
+            if(daysBetween(f.getDate(), today)==0){
                 current.add(f);
             }
         }
@@ -144,6 +152,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void viewTmrw(View view){
+        this.time = 1;
+
         //change border color
         LinearLayout border = (LinearLayout)findViewById(R.id.border);
         border.setBackgroundColor(Color.parseColor("#1e90ff"));
@@ -156,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
         current = new ArrayList<>();
         Date today = new Date();
         for(FoodItem f:foodItems){
-            if(TimeUnit.DAYS.convert(f.getDate().getTime() - today.getTime(), TimeUnit.MILLISECONDS)==1){
+            if(daysBetween(f.getDate(), today)==1){
                 current.add(f);
             }
         }
@@ -183,6 +193,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void viewFuture(View view){
+        this.time = 2;
+
         //change border color
         LinearLayout border = (LinearLayout)findViewById(R.id.border);
         border.setBackgroundColor(Color.GREEN);
@@ -195,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
         current = new ArrayList<>();
         Date today = new Date();
         for(FoodItem f:foodItems){
-            if(TimeUnit.DAYS.convert(f.getDate().getTime()-today.getTime(),TimeUnit.MILLISECONDS)>1){
+            if(daysBetween(f.getDate(), today)>1){
                 current.add(f);
             }
         }
@@ -236,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
         param.setMargins(30, 30, 30, 30);
         //iterate through current and create an item for every element and ad it to items
         for(FoodItem f:current){
-            items.addView(createFoodItem(f.getName(), f.getDate(), f.getId(), 0),param);
+            items.addView(createFoodItem(f.getName(), f.getDate(), f.getId(), time),param);
         }
         sort = 0;
     }
@@ -256,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
         param.setMargins(30, 30, 30, 30);
         //iterate through current and create an item for every element and ad it to items
         for(FoodItem f:current){
-            items.addView(createFoodItem(f.getName(), f.getDate(), f.getId(), 0),param);
+            items.addView(createFoodItem(f.getName(), f.getDate(), f.getId(), time),param);
         }
         sort = 1;
     }
@@ -275,7 +287,7 @@ public class MainActivity extends AppCompatActivity {
     public LinearLayout createFoodItem(String name, Date date, int id, int status){
         LinearLayout L  = new LinearLayout(this);
         L.setOrientation(LinearLayout.VERTICAL);
-        L.setPadding(5, 5, 5, 5);
+        L.setPadding(15,5,5,5);
         if(status == -1) {
             L.setBackgroundColor(Color.parseColor("#ff0000"));
         }
@@ -291,17 +303,39 @@ public class MainActivity extends AppCompatActivity {
 
         TextView textName = new TextView(this);
         textName.setText(name);
+        textName.setTextColor(Color.parseColor("#ffffff"));
+        textName.setTextSize(textSize);
         TextView textDate = new TextView(this);
-        textDate.setText("Expires "+date.toString());
+        String monthname=(String)android.text.format.DateFormat.format("MMMM", date);
+        textDate.setText("Expiry date: "+monthname+" "+date.getDate()+", "+date.getYear());
+        textDate.setTextColor(Color.parseColor("#ffffff"));
+        textDate.setTextSize(textSize);
         TextView textId = new TextView(this);
-        textId.setText(Integer.toString(id));
+        textId.setText("ID: " + Integer.toString(id));
+        textId.setTextColor(Color.parseColor("#ffffff"));
+        textId.setTextSize(textSize);
 
         LinearLayout L2 = new LinearLayout(this);
         L2.setOrientation(LinearLayout.HORIZONTAL);
-        L2.setPadding(10,10,10,10);
+        L2.setPadding(10, 10, 10, 10);
         TextView daysLeft = new TextView(this);
-        Date today = new Date();
-        daysLeft.setText(Long.toString(TimeUnit.DAYS.convert(date.getTime()-today.getTime(),TimeUnit.MILLISECONDS))+" days left.");
+        Calendar todayDate = Calendar.getInstance();
+        todayDate.clear(Calendar.HOUR); todayDate.clear(Calendar.MINUTE); todayDate.clear(Calendar.SECOND);
+        Date today = todayDate.getTime();
+        if(this.time == -1) {
+            daysLeft.setText("Expired "+Integer.toString(daysBetween(date, today)) + " days ago.");
+        }
+        else if(this.time == 0) {
+            daysLeft.setText("Expires today.");
+        }
+        else if(this.time == 1) {
+            daysLeft.setText("Expires tomorrow.");
+        }
+        else { //this.time = 2
+            daysLeft.setText(Integer.toString(daysBetween(date, today)) + " days left.");
+        }
+        daysLeft.setTextColor(Color.parseColor("#ffffff"));
+        daysLeft.setTextSize(textSize);
         LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
@@ -310,7 +344,7 @@ public class MainActivity extends AppCompatActivity {
         Button delButton = new Button(this);
         delButton.setBackgroundColor(Color.parseColor("#000000"));
         delButton.setText("Delete");
-        if(status == -1) {
+        if (status == -1) {
             delButton.setTextColor(Color.parseColor("#ff0000"));
         }
         else if(status == 0){
@@ -322,14 +356,13 @@ public class MainActivity extends AppCompatActivity {
         else { //status = 2
             delButton.setTextColor(Color.parseColor("#00ff00"));
         }
-        delButton.setGravity(Gravity.RIGHT);
+        //delButton.setGravity(Gravity.RIGHT);
         delButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 delete(v);
             }
         });
-        delButton.setGravity(Gravity.RIGHT);
         L2.addView(delButton);
 
         L.addView(textName);
@@ -348,6 +381,93 @@ public class MainActivity extends AppCompatActivity {
 
         //remove the item from the database
         Database db = new Database(this);
-        db.delete(Integer.parseInt(((TextView)L.getChildAt(2)).getText().toString()));
+        int id = Integer.parseInt(((TextView) L.getChildAt(2)).getText().toString().split(" ")[1]);
+        db.delete(id);
+
+        FoodItem foodItem = new FoodItem();
+        for(FoodItem f:foodItems){
+            if(f.getId() == id){
+                foodItem = f;
+                break;
+            }
+        }
+        foodItems.remove(foodItem);
+    }
+
+    public int daysBetween(Date d1, Date d2) {
+        System.out.println("#####################################################################");
+        System.out.println("#######################################  "+d1.toString());
+        System.out.println("#######################################  "+d1.getTime());
+        System.out.println("#######################################  "+d2.toString());
+        System.out.println("#######################################  "+d2.getTime());
+        System.out.println("###############  YEAR:  "+d2.getYear());
+        System.out.println("#######################################  "+(d2.getTime() - d1.getTime()));
+        return (int)( (d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24 ));
     }
 }
+
+/*
+XML CODE FOR A FOOD ITEM DISPLAY LAYOUT
+
+<LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="10dp"
+                    android:background="#ff6103"
+                    android:padding="5dp"
+                    android:id="@+id/testLinearLayout">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:text="Name"
+                        android:id="@+id/textView3"
+                        android:textColor="#ffffff" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:text="Expiry Date"
+                        android:id="@+id/textView4"
+                        android:textColor="#ffffff" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:text="ID#"
+                        android:id="@+id/textView5"
+                        android:textColor="#ffffff" />
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:text="Days Left"
+                            android:id="@+id/textView6"
+                            android:layout_margin="10dp"
+                            android:layout_weight="1" />
+
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Delete"
+                            android:id="@+id/testButton"
+                            android:layout_margin="5dp"
+                            android:textColor="#ff6103"
+                            android:background="#000000"
+                            android:layout_gravity="right" />
+                    </LinearLayout>
+
+                </LinearLayout>
+ */
