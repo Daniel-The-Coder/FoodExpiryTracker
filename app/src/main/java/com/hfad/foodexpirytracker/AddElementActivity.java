@@ -28,6 +28,7 @@ public class AddElementActivity extends AppCompatActivity {
         int year = datePicker.getYear();
         int month = datePicker.getMonth();
         int date = datePicker.getDayOfMonth();
+        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@2  "+year);
         db.add(name, year, month, date);
 
         //go back to main page

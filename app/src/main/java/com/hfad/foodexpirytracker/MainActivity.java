@@ -82,7 +82,9 @@ public class MainActivity extends AppCompatActivity {
 
         //change the value of current
         current = new ArrayList<>();
-        Date today = new Date();
+        Calendar todayDate = Calendar.getInstance();
+        todayDate.clear(Calendar.HOUR); todayDate.clear(Calendar.MINUTE); todayDate.clear(Calendar.SECOND);
+        Date today = todayDate.getTime();
         for(FoodItem f:foodItems){
             if(daysBetween(f.getDate(), today)<0){
                 current.add(f);
@@ -123,7 +125,9 @@ public class MainActivity extends AppCompatActivity {
 
         //change the value of current
         current = new ArrayList<>();
-        Date today = new Date();
+        Calendar todayDate = Calendar.getInstance();
+        todayDate.clear(Calendar.HOUR); todayDate.clear(Calendar.MINUTE); todayDate.clear(Calendar.SECOND);
+        Date today = todayDate.getTime();
         for(FoodItem f:foodItems){
             if(daysBetween(f.getDate(), today)==0){
                 current.add(f);
@@ -164,7 +168,9 @@ public class MainActivity extends AppCompatActivity {
 
         //change the value of current
         current = new ArrayList<>();
-        Date today = new Date();
+        Calendar todayDate = Calendar.getInstance();
+        todayDate.clear(Calendar.HOUR); todayDate.clear(Calendar.MINUTE); todayDate.clear(Calendar.SECOND);
+        Date today = todayDate.getTime();
         for(FoodItem f:foodItems){
             if(daysBetween(f.getDate(), today)==1){
                 current.add(f);
@@ -205,7 +211,9 @@ public class MainActivity extends AppCompatActivity {
 
         //change the value of current
         current = new ArrayList<>();
-        Date today = new Date();
+        Calendar todayDate = Calendar.getInstance();
+        todayDate.clear(Calendar.HOUR); todayDate.clear(Calendar.MINUTE); todayDate.clear(Calendar.SECOND);
+        Date today = todayDate.getTime();
         for(FoodItem f:foodItems){
             if(daysBetween(f.getDate(), today)>1){
                 current.add(f);
@@ -323,7 +331,7 @@ public class MainActivity extends AppCompatActivity {
         todayDate.clear(Calendar.HOUR); todayDate.clear(Calendar.MINUTE); todayDate.clear(Calendar.SECOND);
         Date today = todayDate.getTime();
         if(this.time == -1) {
-            daysLeft.setText("Expired "+Integer.toString(daysBetween(date, today)) + " days ago.");
+            daysLeft.setText("Expired "+Integer.toString((-1)*daysBetween(date, today)) + " days ago.");
         }
         else if(this.time == 0) {
             daysLeft.setText("Expires today.");
@@ -395,14 +403,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public int daysBetween(Date d1, Date d2) {
-        System.out.println("#####################################################################");
-        System.out.println("#######################################  "+d1.toString());
-        System.out.println("#######################################  "+d1.getTime());
-        System.out.println("#######################################  "+d2.toString());
-        System.out.println("#######################################  "+d2.getTime());
-        System.out.println("###############  YEAR:  "+d2.getYear());
-        System.out.println("#######################################  "+(d2.getTime() - d1.getTime()));
-        return (int)( (d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24 ));
+        //d2 is today
+        d2.setYear(2016);
+        //I NEED TO UPDATE THE LINE ABOVE NEXT YEAR
+        d2.setHours(0);
+        d2.setMinutes(1);
+        d1.setHours(0);
+        d1.setMinutes(1);
+        System.out.println(d1.toString()+"           "+(d1.getTime() - d2.getTime()));
+        System.out.println("DAYS: "+(( (float)(d1.getTime() - d2.getTime()) / (1000 * 60 * 60 * 24))));
+        return (int) Math.round(((float) (d1.getTime() - d2.getTime()) / (1000 * 60 * 60 * 24 ))) ;
     }
 }
 
